@@ -33,6 +33,8 @@ public struct SwiftTestingReporter: ScenarioReporter {
 /// tests concurrently by default, so scoping the active reporter to the current task tree keeps
 /// reporter overrides in one test from leaking into another that happens to run in parallel.
 public enum ScenarioReporting {
+    /// The reporter matcher failures are sent to, scoped to the current task tree.
+    /// Defaults to ``SwiftTestingReporter``; override with `withScenarioReporter(_:operation:)`.
     @TaskLocal public static var current: any ScenarioReporter = SwiftTestingReporter()
 }
 
