@@ -33,16 +33,29 @@ extension Matcher {
 // MARK: - Logical composition
 
 extension Matcher {
+    /// Negates a matcher: the result matches exactly when `matcher` does not.
+    /// - Parameter matcher: The matcher to negate.
+    /// - Returns: A matcher describing itself as "not <description>".
     public static prefix func ! (matcher: Matcher<Value>) -> Matcher<Value> {
         Matcher(description: "not \(matcher.description)") { !matcher.matches($0) }
     }
 
+    /// Combines two matchers so the result matches only when both do.
+    /// - Parameters:
+    ///   - lhs: The first matcher.
+    ///   - rhs: The second matcher.
+    /// - Returns: A matcher describing itself as "<lhs> and <rhs>".
     public static func && (lhs: Matcher<Value>, rhs: Matcher<Value>) -> Matcher<Value> {
         Matcher(description: "\(lhs.description) and \(rhs.description)") {
             lhs.matches($0) && rhs.matches($0)
         }
     }
 
+    /// Combines two matchers so the result matches when either does.
+    /// - Parameters:
+    ///   - lhs: The first matcher.
+    ///   - rhs: The second matcher.
+    /// - Returns: A matcher describing itself as "<lhs> or <rhs>".
     public static func || (lhs: Matcher<Value>, rhs: Matcher<Value>) -> Matcher<Value> {
         Matcher(description: "\(lhs.description) or \(rhs.description)") {
             lhs.matches($0) || rhs.matches($0)

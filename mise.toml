@@ -1,5 +1,5 @@
 [tools]
-swift = '6.0'
+swift = '6.3.1'
 "github:executor-cli/executor" = "0.28.1"
 
 [env]
@@ -58,6 +58,23 @@ if [[ "${usage_skip_ci:-}" == "false" ]]; then
 fi
 
 executor release package $dry_run_opt $enable_changelog_opt $enable_verbose_opt $skip_ci_opt --current-directory .
+'''
+
+[tasks.lint]
+description = "Check formatting, code and documentation. Fails if formatting changed any file."
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+# ponytail: executor format has no --lint flag, so format then diff the diff
+before=$(git diff)
+executor format .
+if [[ "$before" != "$(git diff)" ]]; then
+    git diff
+    echo "❌ formatting changed files — commit the result of 'mise format'" >&2
+    exit 1
+fi
+executor linting code ./Sources --reporter console
+executor linting documentation ./Sources --reporter console
 '''
 
 [tasks.check_documentation]
